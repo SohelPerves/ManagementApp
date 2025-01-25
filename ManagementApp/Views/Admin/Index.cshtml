@@ -1,0 +1,70 @@
+﻿@model List<ApplicationUser>
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary">User Management</h2>
+        <a href="/Account/Logout" class="btn btn-danger">Logout</a>
+    </div>
+
+    <form method="post" id="userManagementForm">
+        <div class="d-flex justify-content-between mb-3">
+            <!-- Toolbar -->
+            <div>
+                <button formaction="/Admin/Block" class="btn btn-outline-primary"><i class="bi bi-ban"></i>Block</button>
+                <button formaction="/Admin/Unblock" class="btn btn-outline-primary"><i class="bi bi-unlock"></i></button>
+                <button formaction="/Admin/Delete" class="btn btn-outline-danger"><i class="bi bi-trash"></i></button>
+            </div>
+            
+        </div>
+
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>
+                        <input type="checkbox" id="selectAll" />
+                    </th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Registration Time</th>
+                    <th>Last Login Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="ids" value="@user.Id" />
+                        </td>
+                        <td>@user.Name</td>
+                        <td>@user.Email</td>
+                        <td>@user.RegistrationTime.ToString("g")</td>
+                        <td>@(user.LastLoginTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "Never")</td>
+                        <td>
+                            @if (user.IsBlocked)
+                            {
+                                <span class="badge bg-danger">Blocked</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<script>
+    // JavaScript for "Select All" functionality
+    document.getElementById('selectAll').addEventListener('change', function () {
+        const checkboxes = document.querySelectorAll('input[name="ids"]');
+        checkboxes.forEach(cb => cb.checked = this.checked);
+    });
+</script>
