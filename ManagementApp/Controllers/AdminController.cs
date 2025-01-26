@@ -20,10 +20,28 @@ public class AdminController : Controller
     [HttpPost]
     public IActionResult Block(List<int> ids)
     {
-        var users = _context.Users.Where(u => ids.Contains(u.Id)).ToList();
-        foreach (var user in users) user.IsBlocked = true;
-        _context.SaveChanges();
-        return RedirectToAction("Index");
+        // Perform the block operation
+        foreach (var id in ids)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Id == id);
+            if (user != null)
+            {
+                user.IsBlocked = true;
+                _context.SaveChanges();
+            }
+        }
+
+        // Check if all users are blocked
+        bool allBlocked = _context.Users.All(u => u.IsBlocked);
+
+        if (allBlocked)
+        {
+            // Redirect to the login page if all users are blocked
+            return RedirectToAction("Login", "Account");
+        }
+
+        // Stay on the current page if not all users are blocked
+        return RedirectToAction("Dashboard");
     }
 
     [HttpPost]
